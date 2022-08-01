@@ -10,13 +10,15 @@ export const _BASE_URL = "http://gmall-h5-api.atguigu.cn/";
 export const ROUTERS = {
     HOME: "/home",
     AUTH_MANAGE: "auth-manage",
-    MERCHANT_MANAGE: "merchant-manage",
+    MERCHANDISE_MANAGE: "/item/merchant-manage",
     USER_MANAGE: "/auth-manage/user-manage",
     ROLE_MANAGE: "/auth-manage/role-manage",
     MENU_MANAGE: "/auth-manage/menu-manage",
     PLATFORM_MANAGE: "/merchant-manage/platform-manage",
     SPU_MANAGE: "/merchant-manage/spu-manage",
-    SKU_MANAGE: "/merchant-manage/sku-manage"
+    SKU_MANAGE: "/merchant-manage/sku-manage",
+    CATEGORY_MANAGE:"/item/category",
+    ITEM_MANAGE:"/item"
 };
 
 // 一页展示的数据个数

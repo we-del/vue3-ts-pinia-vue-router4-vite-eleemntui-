@@ -12,7 +12,7 @@ defineProps<{
 }>();
 // defineProps代理的数据是只读的(readonly),如果想让其编程响应式的则需要使用toRef()进行包装，或使用ref
 
-const emit = defineEmits(["updateDialogVisible", "updateUserList"]);
+const emit = defineEmits(["updateDialogVisible", "updateRoleList"]);
 
 
 const curRole = reactive<{ roleName: string }>({
@@ -32,7 +32,7 @@ const updateVisible = () => {
 
     if (valid) {
       // 添加角色
-      addUserToList();
+      addRoleToList();
 
     }
 
@@ -45,13 +45,13 @@ const updateVisible = () => {
  @description: 添加角色调用
  */
 
-const addUserToList = async () => {
+const addRoleToList = async () => {
   const res: any = await addRoleReq(curRole);
   console.log(res);
   if (res.data.status === 0) {
 
     // 重新获得角色列表数据
-    emit("updateUserList");
+    emit("updateRoleList");
 
     // 进行提示
     ElMessage({

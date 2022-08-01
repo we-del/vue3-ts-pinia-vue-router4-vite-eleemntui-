@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import {reactive, onMounted} from "vue";
 import GraphDetail from "@/pages/home/home-middle-container/GraphDetail.vue";
-import {getVisitYearAxisReq, getVisitYearDataReq, getVisitRankReq} from "@/api/home";
+// import {getVisitYearAxisReq, getVisitYearDataReq, getVisitRankReq} from "@/api/home";
+import {getVisitYearAxisReq, getVisitYearReq, getVisitRankReq} from "@/api/charts";
 import {RankData} from "@/interface";
 
 const axisShow = reactive<number[]>([]);
@@ -9,7 +10,7 @@ const data = reactive<number[]>([]);
 const rankData = reactive<RankData[]>([]);
 onMounted(async () => {
   // 获得sellYear数据
-  const res1 = await getVisitYearDataReq();
+  const res1 = await getVisitYearReq();
   // 获得sellYearAxis
   const res2 = await getVisitYearAxisReq();
   // 获得SellRank数据
@@ -64,7 +65,7 @@ const option = reactive({
       type: 'bar',
       barWidth: '60%',
       data,
-      colorBy:'data'
+      colorBy: 'data'
     }
   ]
 

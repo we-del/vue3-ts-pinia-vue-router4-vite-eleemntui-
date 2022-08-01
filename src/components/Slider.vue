@@ -23,15 +23,15 @@
       <el-menu-item :index="USER_MANAGE">用户管理</el-menu-item>
       <el-menu-item :index="ROLE_MANAGE">角色管理</el-menu-item>
     </el-sub-menu>
-    <el-sub-menu :index="MERCHANT_MANAGE">
+    <el-sub-menu :index="ITEM_MANAGE">
       <template #title>
         <el-icon>
           <ShoppingBag/>
         </el-icon>
-        <span>商品管理</span>
+        <span>商品</span>
       </template>
-      <el-menu-item :index="PLATFORM_MANAGE">分类管理</el-menu-item>
-      <el-menu-item :index="SPU_MANAGE">商品管理</el-menu-item>
+      <el-menu-item :index="CATEGORY_MANAGE">分类管理</el-menu-item>
+      <el-menu-item :index="MERCHANDISE_MANAGE">商品管理</el-menu-item>
     </el-sub-menu>
 
   </el-menu>
@@ -48,7 +48,7 @@ import {ROUTERS} from "@/config";
 // 可以接收一个page属性，接收的props在template中可以直接使用,defineProps接收的数据会包装为一个proxy代理
 const {
   HOME, USER_MANAGE, SKU_MANAGE, SPU_MANAGE, MENU_MANAGE, PLATFORM_MANAGE, ROLE_MANAGE
-  , AUTH_MANAGE, MERCHANT_MANAGE
+  , AUTH_MANAGE, MERCHANDISE_MANAGE,CATEGORY_MANAGE,ITEM_MANAGE
 } = ROUTERS;
 const a = defineProps<{ page: string, defaultSpread: string[] }>()
 const handleOpen = (key: string, keyPath: string[]) => {

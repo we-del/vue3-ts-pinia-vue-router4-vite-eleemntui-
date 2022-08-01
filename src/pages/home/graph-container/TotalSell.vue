@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import {reactive, computed} from "vue";
 import DetailCollect from "@/pages/home/graph-container/DetailCollect.vue";
-import {getSellReq} from "@/api/home";
+// import {getSellReq} from "@/api/home";
+import {getDaySellReq} from "@/api/charts";
 
 const showData = reactive<any>({});
-getSellReq().then(res => {
+getDaySellReq().then(res => {
   console.log(res);
   const {data} = res;
   if (data.status === 0) {

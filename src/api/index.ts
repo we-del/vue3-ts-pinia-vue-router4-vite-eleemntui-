@@ -7,15 +7,23 @@ import axios from "axios";
 // @ts-ignore
 import Qs from "qs";
 import {ElMessage} from "element-plus";
+import loginStore from "@/store/UserLoginDataStore";
 
 const ajax = axios.create();
 
 
 // 此token用于临时开发(获得接口权限)，在项目完成后，新增token验证功能，以处理此问题
-const token = "atguigu_eyJhbGciO" +
-    "iJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxOGNhMzk3MmQ" +
-    "3MjZhNGEyNGNjYWU3YyIsImlhdCI6MTY1ODM5MDY4OCwiZXhwIjoxNjU4" +
-    "OTk1NDg4fQ.Rwv5g21VE6_dr6NmcUIWgWfuVPc996RvejKeMM_zy1g";
+const token = "atguigu_eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVkYzQ0NGJiMmFm" +
+    "YjkxODg0YzI3OGQ3ZiIsImlhdCI6MTY1ODk5NTY0MywiZXhwIjoxNjU5NjAwNDQzfQ.1XWBT-R2dQm1" +
+    "ObJC97R43_lqD0IhGyhdhismjXpxVls";
+
+
+// 需做数据持久化   pinia和axios有执行优先级问题，需要包装为微任务使用
+// let token = "";
+// setTimeout(() => {
+//
+//     token = "atguigu_" + loginStore().token;
+// })
 ajax.interceptors.request.use((config) => {
     let {method, data} = config;
     if (method?.toLocaleUpperCase() === "POST") {

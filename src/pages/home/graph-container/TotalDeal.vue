@@ -17,11 +17,12 @@ use([CanvasRenderer, BarChart,
 
 import DetailCollect from "@/pages/home/graph-container/DetailCollect.vue";
 import {getPayReq} from "@/api/home";
+import {getPayNumberReq} from "@/api/charts";
 
 
 const showData = reactive<any>({});
 const data = reactive<number[]>([]);
-getPayReq().then(res => {
+getPayNumberReq().then(res => {
   if (res.data.status === 0) {
     Object.keys(res.data.data).forEach(key => {
       showData[key] = res.data.data[key];
@@ -97,7 +98,7 @@ console.log("eCharts=",eCharts);
     <template v-slot:content>
       <h3> {{ showData.payTotal }}</h3>
       <!--      Echart一定要给宽高，因为其依赖宽高样式进行显示-->
-      <EChart :option="option" :style="{height:'50%'}" ref="eCharts"/>
+      <EChart :option="option" :style="{height:'50%'}" :autoresize="true" ref="eCharts"/>
     </template>
     <template v-slot:footer>
       <div>转换率 {{ showData.payRate }}%</div>

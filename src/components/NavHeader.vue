@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import {ref} from "vue";
+import {ref,onMounted,onUnmounted} from "vue";
 import {useRouter, useRoute} from "vue-router";
 import UserLoginDataStore from "@/store/UserLoginDataStore";
 import dayjs from "dayjs";
 
+
+
 let curTime = ref<string>(dayjs().format('YYYY MM-DD HH:mm:ss '));
-setInterval(() => {
-  curTime.value = dayjs().format('YYYY MM-DD HH:mm:ss ');
-}, 1000);
+
 
 // 得到router对象中的replace函数
 const {replace} = useRouter();
@@ -16,6 +16,16 @@ const loginout = () => {
   replace("/login"); // 回到登录页面
 }
 const userLoginDataStore = UserLoginDataStore();
+
+let timer = null;
+onMounted(()=>{
+  timer = setInterval(() => {
+    curTime.value = dayjs().format('YYYY MM-DD HH:mm:ss ');
+  }, 1000);
+})
+onUnmounted(()=>{
+  clearInterval(timer);
+})
 </script>
 
 <template>

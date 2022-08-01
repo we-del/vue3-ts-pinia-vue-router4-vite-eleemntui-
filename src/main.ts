@@ -2,8 +2,8 @@ import {createApp} from 'vue'
 import App from '@/App.vue'
 import {createPinia} from "pinia";
 import router from "@/router";
-import "@/mock"; // 引入 mockServer
-import "@/api/home"; // 引入 ts测试接口
+// import "@/mock"; // 全局引入 mockServer ,此方法为全局引入，可能会影响element-ui的upload组件的接口调用
+
 import "@/assets/reset.css";
 import "element-plus/theme-chalk/el-loading.css";
 import "element-plus/theme-chalk/el-message.css";

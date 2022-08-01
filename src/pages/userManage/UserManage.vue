@@ -85,6 +85,7 @@ const updateUserList = async () => {
       Reflect.deleteProperty(userCopy, 'password');
       Reflect.deleteProperty(userCopy, 'role_id');
 
+      console.log("targetRole",targetRole);
       // 设置新的属性
       Reflect.set(userCopy, 'role', targetRole.name);
 

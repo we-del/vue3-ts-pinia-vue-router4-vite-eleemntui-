@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+
+// 引入 mockjs
+// import "@/mock"; // 局部引入mock服务器
+
 // 布局组件
 import Layout from "@/layout/Layout.vue";
 import Slider from "@/components/Slider.vue";
@@ -14,7 +18,7 @@ const {HOME} = ROUTERS;
 <template>
   <Layout>
     <template v-slot:slider>
-      <Slider :page="HOME" />
+      <Slider :page="HOME"/>
     </template>
     <template v-slot:header>
       <NavHeader>
@@ -35,7 +39,7 @@ const {HOME} = ROUTERS;
 
 
 <style scoped lang="scss">
-.gap{
+.gap {
   margin-top: 20px;
 }
 </style>

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import {reactive, onMounted} from "vue";
 import GraphDetail from "@/pages/home/home-middle-container/GraphDetail.vue";
-import {getSellYearAxisReq, getSellYearDataReq, getSellRankReq} from "@/api/home";
+// import {getSellYearAxisReq, getSellYearDataReq, getSellRankReq} from "@/api/home";
+import {getSellYearAxisReq, getSellYearReq, getSellRankReq} from "@/api/charts";
 import {RankData} from "@/interface";
 
 const axisShow = reactive<number[]>([]);
@@ -9,7 +10,7 @@ const data = reactive<number[]>([]);
 const rankData = reactive<RankData[]>([]);
 onMounted(async () => {
   // 获得sellYear数据
-  const res1 = await getSellYearDataReq();
+  const res1 = await getSellYearReq();
   // 获得sellYearAxis
   const res2 = await getSellYearAxisReq();
   // 获得SellRank数据

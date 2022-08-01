@@ -6,7 +6,8 @@ import {CanvasRenderer} from "echarts/renderers";
 import {BarChart} from "echarts/charts";
 import {TooltipComponent, GridComponent} from "echarts/components";
 
-import {getSearchWorkReq} from "@/api/home";
+// import {getSearchWorkReq} from "@/api/home";
+import {getSearchWordReq} from "@/api/charts";
 import {SearchWordData} from "@/interface";
 
 use([CanvasRenderer, BarChart, TooltipComponent, GridComponent]);
@@ -54,7 +55,7 @@ const option = reactive({
   ]
 });
 onMounted(async () => {
-  const res = await getSearchWorkReq();
+  const res = await getSearchWordReq();
   if (res.data.status === 0) {
     console.log(res);
     res.data.data.forEach((obj: SearchWordData) => {

@@ -15,6 +15,7 @@ import PaginationAddTable from "@/test/element-ui/PaginationAddTable.vue";
 import TestProvide from "@/test/provideAndInject/TestProvide.vue";
 import TestRole from "@/test/router/CopyRole.vue";
 import TestTree from "@/test/element-ui/TreeTab.vue";
+import Upload from "@/test/element-ui/Upload.vue";
 
 export default [
     {
@@ -71,5 +72,10 @@ export default [
         name: "TestTree",
         path: "/tree",
         component: TestTree
+    },
+    {
+        name: "Upload",
+        path: "/upload",
+        component: Upload
     }
 ]

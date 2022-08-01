@@ -2,21 +2,26 @@
 /**
  @description: 用于显示新增和更新角色的提示框
  */
-import {defineProps, ref, defineEmits, reactive} from 'vue'
+import {defineProps, ref, defineEmits, reactive, inject, onUpdated} from 'vue'
 import type {FormInstance} from 'element-plus'
 import {ElMessage} from 'element-plus'
-import {addRoleReq} from "@/api/role";
+import {addSingleCategoryReq, updateSingleCategoryReq} from "@/api/category";
 
 defineProps<{
   dialogVisible: boolean,
 }>();
 // defineProps代理的数据是只读的(readonly),如果想让其编程响应式的则需要使用toRef()进行包装，或使用ref
 
-const emit = defineEmits(["updateDialogVisible", "updateUserList"]);
+const emit = defineEmits(["updateDialogVisible", "updateCategoryList"]);
 
 
-const curRole = reactive<{ roleName: string }>({
-  roleName: '',
+// 当前更新的分类
+const curUpdateRow: any = inject("curUpdateRow");
+
+const categoryUpdateOpe: any = inject("categoryUpdateOpe");
+
+const curCategory = reactive<{ categoryName: string, categoryId?: string }>({
+  categoryName: '',
 });
 
 
@@ -32,7 +37,11 @@ const updateVisible = () => {
 
     if (valid) {
       // 添加角色
-      addUserToList();
+      if (categoryUpdateOpe.value) {
+        updateCategoryToList();
+      } else {
+        addCategoryToList();
+      }
 
     }
 
@@ -42,26 +51,43 @@ const updateVisible = () => {
 
 
 /**
- @description: 添加角色调用
+ @description: 添加分类调用
  */
 
-const addUserToList = async () => {
-  const res: any = await addRoleReq(curRole);
+const addCategoryToList = async () => {
+  const res: any = await addSingleCategoryReq(curCategory);
+  updateList(res);
+}
+
+/**
+ @description: 更新分类信息调用
+ */
+
+const updateCategoryToList = async () => {
+  curCategory.categoryId = curUpdateRow._id;
+  const res: any = await updateSingleCategoryReq(curCategory);
+  updateList(res);
+}
+
+/**
+ @description: 更新列表展示数据
+ */
+const updateList = (res: any) => {
   console.log(res);
   if (res.data.status === 0) {
-
+      console.log(res.data);
     // 重新获得角色列表数据
-    emit("updateUserList");
+    emit("updateCategoryList");
 
     // 进行提示
     ElMessage({
-      message: "添加角色成功",
+      message: "操作成功",
       type: "success"
     });
 
     // 进行dialog善后工作
     clear();
-  }else{
+  } else {
     ElMessage({
       message: "网络异常，请稍后再试",
       type: "warning"
@@ -82,7 +108,7 @@ const clear = () => {
 
   // 清空所有信息（避免清除不干净）
   //@ts-ignore
-  Object.keys(curRole).forEach((key: any) => curRole[key] = '');
+  Object.keys(curCategory).forEach((key: any) => curCategory[key] = '');
 }
 
 /**
@@ -97,7 +123,7 @@ const handlerDialogClose = () => {
 
   // 清空所有信息（避免清除不干净）
   //@ts-ignore
-  Object.keys(curRole).forEach((key: any) => curRole[key] = '')
+  Object.keys(curCategory).forEach((key: any) => curCategory[key] = '')
 }
 
 
@@ -135,25 +161,37 @@ const rules = reactive({
   *  rules中的验证规则需要和modal中的数据源的属性一一对应，否则无法传入正确的验证数据(底层通过当前数据源的值将其当作第二个参数进行传入)
   *  如 :module="{name:'',age:''}" 则对应 rule为 :rule="{name:[validator:nameVerify],age:[validator:ageVerity]}"
   * */
-  roleName: [{
+  categoryName: [{
     required: true,
     message: '输入不能为空',
     trigger: 'blur',
   }, {validator: validate.nameValidate, trigger: 'blur'}]
 });
+
+
+// 每次template重绘会进行调用
+onUpdated(() => {
+  console.log("onUpdated", categoryUpdateOpe);
+  if (categoryUpdateOpe.value) { // 如果为真改变当前curCategory的值为当前选中的值
+    curCategory.categoryName = curUpdateRow.name;
+  } else { // 否则为空
+    curCategory.categoryName = "";
+    console.log(curCategory);
+  }
+})
 </script>
 <template>
 
   <el-dialog
       v-model="dialogVisible"
-      :title="'添加角色'"
+      :title="categoryUpdateOpe ? '修改分类':'添加分类'"
       width="30%"
       :before-close="handlerDialogClose"
   >
     <template #default>
-      <el-form ref="formRef" :model="curRole" :rules="rules" label-width="100px">
-        <el-form-item label="角色名" prop="roleName">
-          <el-input v-model="curRole.roleName"/>
+      <el-form ref="formRef" :model="curCategory" :rules="rules" label-width="100px">
+        <el-form-item label="分类名" prop="categoryName">
+          <el-input v-model="curCategory.categoryName"/>
         </el-form-item>
       </el-form>
     </template>

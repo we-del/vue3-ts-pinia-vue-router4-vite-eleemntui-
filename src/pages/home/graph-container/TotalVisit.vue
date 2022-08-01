@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import {reactive, computed} from "vue";
 import DetailCollect from "@/pages/home/graph-container/DetailCollect.vue";
-import {getVisitReq} from "@/api/home";
+// import {getVisitReq} from "@/api/home";
+import {getDayVisitReq} from "@/api/charts";
 import EChart from "vue-echarts";
 import {use} from "echarts/core";
 import {CanvasRenderer} from "echarts/renderers";
@@ -19,7 +20,7 @@ use([CanvasRenderer, LineChart,
 
 const showData = reactive<any>({});
 const data = reactive<number[]>([]);
-getVisitReq().then(res => {
+getDayVisitReq().then(res => {
   if (res.data.status === 0) {
     Object.keys(res.data.data).forEach(key => {
       showData[key] = res.data.data[key];
@@ -86,7 +87,7 @@ const option = reactive({
     <template v-slot:content>
       <h3> {{ showData.visitTotal }}</h3>
       <!--      Echart一定要给宽高，因为其依赖宽高样式进行显示-->
-      <EChart :option="option" :style="{height:'50%'}"/>
+      <EChart :option="option" :autoresize="true" :style="{height:'50%'}"/>
     </template>
     <template v-slot:footer>
       <div>日访问量{{ showData.visitToday }}</div>

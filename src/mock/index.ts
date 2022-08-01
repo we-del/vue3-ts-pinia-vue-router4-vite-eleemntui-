@@ -4,7 +4,7 @@
  * @description:
  */
 
-// @ts-ignore
+//@ts-ignore
 import Mock from "mockjs";
 import data from "./data.json";
 import {MOCK_API} from "@/config";

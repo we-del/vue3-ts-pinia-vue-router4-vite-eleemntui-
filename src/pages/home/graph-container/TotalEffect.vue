@@ -16,7 +16,8 @@ use([CanvasRenderer, BarChart,
   GridComponent]);
 
 import DetailCollect from "@/pages/home/graph-container/DetailCollect.vue";
-import {getActivityReq} from "@/api/home";
+// import {getActivityReq} from "@/api/home";
+import {getActivityReq} from "@/api/charts";
 
 
 const showData = reactive<any>({});
@@ -98,7 +99,7 @@ const option = reactive({
     <template v-slot:content>
       <h3> {{ showData.activityRate }}%</h3>
       <!--      Echart一定要给宽高，因为其依赖宽高样式进行显示-->
-      <EChart :option="option" :style="{height:'50%'}"/>
+      <EChart :option="option" :autoresize="true" :style="{height:'50%'}"/>
     </template>
     <template v-slot:footer>
       <div>

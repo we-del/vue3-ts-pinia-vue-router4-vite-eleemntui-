@@ -6,7 +6,8 @@ import {CanvasRenderer} from "echarts/renderers";
 import {BarChart} from "echarts/charts";
 import {TooltipComponent, GridComponent} from "echarts/components";
 
-import {getSalaryRankReq} from "@/api/home";
+// import {getSalaryRankReq} from "@/api/home";
+import {getSaleRankReq} from "@/api/charts";
 import {SellPercentData} from "@/interface";
 
 use([CanvasRenderer, BarChart, TooltipComponent, GridComponent]);
@@ -75,7 +76,7 @@ const toggleGraph = (flag: boolean) => {
 }
 
 onMounted(async () => {
-  const res = await getSalaryRankReq();
+  const res = await getSaleRankReq();
   if (res.data.status === 0) { // 0 表示数据获取成功
     // 将从服务器获取的数据添加到数据源中(因为是代理页面会进行重绘)
     res.data.data.online.name.forEach((val: any) => {

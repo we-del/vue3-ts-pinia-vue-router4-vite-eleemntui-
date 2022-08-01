@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 // 三方库
-import {ref, onMounted, reactive,toRef, provide} from "vue";
+import {ref, onMounted, reactive, provide} from "vue";
 import {ElMessage, ElMessageBox,} from 'element-plus';
 import Dayjs from "dayjs";
 
@@ -11,14 +11,16 @@ import Slider from "@/components/Slider.vue";
 import NavHeader from "@/components/NavHeader.vue";
 
 // 自定义组件
-import AddRole from "./AddRole.vue";
-import AuthTree from "./AuthTree.vue";
+// import AddRole from "./AddRole.vue";
+// import AuthTree from "./AuthTree.vue";
+import UpdateCategorySingle from "./UpdateCategorySingle.vue";
+
 // 配置项
 import {ROUTERS} from "@/config";
-import {removeRoleReq, addRoleReq, getRoleListReq, updateRoleAuthReq} from "@/api/role";
+import {removeSingleCateogryReq, getCategoryListReq} from "@/api/category";
 import {PAGE_SIZE} from "@/config";
 
-const {ROLE_MANAGE, AUTH_MANAGE} = ROUTERS;
+const {ITEM_MANAGE, CATEGORY_MANAGE} = ROUTERS;
 
 // 存储当前所处分页
 const curPage = ref<number>(1);
@@ -31,7 +33,7 @@ const showDialog = ref<boolean>(false);
 
 // 当前执行的角色操作 (为 -1 表示没有点击任何操作，为0时表达式点击新增角色，为1时表示点击更新角色)
 // 当前执行的角色操作 (为false时表达式点击新增角色，为true时表示点击更新角色)
-const userUpdateOpe = ref<boolean>(false);
+const categoryUpdateOpe = ref<boolean>(false);
 
 // 是否加载
 const isLoading = ref<boolean>(true);
@@ -43,7 +45,7 @@ const serveData = reactive<any[]>([]);
 const allData = reactive<any[]>([]);
 
 // 用于存储当前可选择的角色身份
-const dialogTreeVisible = ref<boolean>(false);
+const dialogCategoryVisible = ref<boolean>(false);
 
 // 当前表单页需要展示的数据
 const tableData = reactive<any[]>([]);
@@ -51,18 +53,18 @@ const tableData = reactive<any[]>([]);
 
 const curUpdateRow = reactive<{ [propsName: string]: any }>({});
 
-// 向其被包裹组件提供可读写的该状态
-provide("dialogTreeVisible",dialogTreeVisible); // treeDialog显示状态
-provide("curUpdateRow",curUpdateRow); // 当前选中的行信息
 
+// 向其被包裹组件提供可读写的该状态
+provide("curUpdateRow", curUpdateRow); // 当前选中的行信息
+provide("categoryUpdateOpe",categoryUpdateOpe);
 
 /**
  @description: 用于重新获得角色列表
  */
 
-const updateUserList = async () => {
+const updateCategoryList = async () => {
   // 获得所有角色列表
-  const res = await getRoleListReq();
+  const res = await getCategoryListReq();
   if (res.data.status === 0) {
     console.log("res@", res);
     const distData = res.data.data;
@@ -79,11 +81,9 @@ const updateUserList = async () => {
     // ref : 改变代理指向，因为其返回的refImpl对象通过value改变数据源
 
 
-    serveData.forEach((role: any) => {
+    serveData.forEach((category: any) => {
 
-      const roleCopy = {...role};
-      roleCopy.create_time = Dayjs(role.create_time).format('YYYY-MM-DD HH:mm:ss');
-      roleCopy.auth_time = Dayjs(role.auth_time).format('YYYY-MM-DD HH:mm:ss');
+      const categoryCopy = {...category};
       // 对原对象进行拷贝，避免影响原数据，知道层数可以使用 ... 不知道则需要使用JSON进行序列化
 
 
@@ -95,16 +95,16 @@ const updateUserList = async () => {
       // Reflect.deleteProperty(userCopy, 'role_id');
       //
       // // 设置新的属性
-      // Reflect.set(userCopy, 'role', targetRole.name);
+      // Reflect.set(userCopy, 'category', targetRole.name);
 
       // 添加到展示表中
-      allData.push(roleCopy);
+      allData.push(categoryCopy);
     })
     // 更新加载状态
     isLoading.value = false;
 
     // 将该数组的role_id作为key,匹配role对象的name属性作为值
-    // serveData.roles.forEach((role: any) => roleObj[role['_id']] = role.name)
+    // serveData.roles.forEach((category: any) => roleObj[category['_id']] = category.name)
 
 
     // 改变数据长度
@@ -114,13 +114,13 @@ const updateUserList = async () => {
     // 改变当前tableData原数据的数据显示
     // splice会修改原数组，并将截取的数据进行返回
     // tableData.push(...([...allData].reverse().splice((curPage.value - 1) * PAGE_SIZE, PAGE_SIZE)))
-    tableData.push(...([...allData].splice((curPage.value - 1) * PAGE_SIZE, PAGE_SIZE)))
+    tableData.push(...([...allData].reverse().splice((curPage.value - 1) * PAGE_SIZE, PAGE_SIZE)))
   }
 }
 
 // 用于发送ajax请求，并更新数据源进行页面重绘
 onMounted(() => {
-  updateUserList();
+  updateCategoryList();
 });
 
 
@@ -140,7 +140,7 @@ const updateCurPage = (page: number) => {
  */
 const updateDialogVisible = (flag: boolean) => {
   showDialog.value = flag;
-  userUpdateOpe.value = flag;
+  categoryUpdateOpe.value = flag;
 }
 
 /**
@@ -149,7 +149,8 @@ const updateDialogVisible = (flag: boolean) => {
 const updateCurRow = (row: any) => {
   console.log("row", row);
   // 更改当前dialog的显示状态
-  dialogTreeVisible.value = true;
+  showDialog.value = true;
+  categoryUpdateOpe.value = true;
   Object.keys(row).forEach((key: any) => curUpdateRow[key] = row[key])
 }
 
@@ -159,16 +160,16 @@ const updateCurRow = (row: any) => {
  */
 const removeCurRow = (row: any) => {
   console.log("row", row);
-  const roleId = row._id;
-  ElMessageBox.confirm(`确定要删除角色 "${row.name}" 吗？`, "删除角色", {
+  const categoryId = row._id;
+  ElMessageBox.confirm(`确定要删除 "${row.name}" 分类吗？`, "删除分类", {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: "warning"
   }).then(async () => {
-    const res = await removeRoleReq({roleId});
+    const res = await removeSingleCateogryReq({categoryId});
     if (res.data.status === 0) {
       ElMessage({type: 'success', message: '删除成功'});
-      updateUserList();
+      updateCategoryList();
     }
   }).catch(() => new Promise(() => {
   }))
@@ -181,12 +182,12 @@ const removeCurRow = (row: any) => {
 <template>
   <Layout>
     <template #slider>
-      <Slider :page="ROLE_MANAGE" :default-spread="[AUTH_MANAGE]"/>
+      <Slider :page="CATEGORY_MANAGE" :default-spread="[ITEM_MANAGE]"/>
     </template>
     <template #header>
       <NavHeader>
         <template #title>
-          <div class="title">角色管理</div>
+          <div class="title">分类管理</div>
         </template>
       </NavHeader>
     </template>
@@ -194,7 +195,7 @@ const removeCurRow = (row: any) => {
       <el-card class="box-card" ref="card">
         <template #header>
           <div class="card-header">
-            <el-button class="button" type="primary" @click="showDialog=true;userUpdateOpe=false;">添加角色</el-button>
+            <el-button class="button" type="primary" @click="showDialog=true;categoryUpdateOpe=false;">添加分类</el-button>
           </div>
         </template>
         <el-table
@@ -203,14 +204,11 @@ const removeCurRow = (row: any) => {
             :style="{width: '100%'}"
             border
         >
-          <el-table-column prop="name" align="center" label="角色名" width="180"/>
-          <el-table-column prop="create_time" align="center" label="创建时间" width="180"/>
-          <el-table-column prop="auth_time" align="center" label="授权时间"/>
-          <el-table-column prop="auth_name" align="center" label="授权人"/>
-          <el-table-column align="center" label="操作">
+          <el-table-column prop="name" align="center" label="分类名" />
+          <el-table-column align="center" label="操作" width="360">
             <template #default="scope">
               <el-button size="small" @click="updateCurRow(scope.row)"
-              >权限
+              >修改
               </el-button
               >
               <el-button
@@ -227,15 +225,16 @@ const removeCurRow = (row: any) => {
                        @current-change="updateCurPage" class="pagination"/>
       </el-card>
 
-      <AddRole :dialog-visible="showDialog" @updateDialogVisible="updateDialogVisible"
-               @updateUserList="updateUserList"/>
-      <AuthTree @updateUserList="curUpdateRow"/>
+      <UpdateCategorySingle  @updateDialogVisible="updateDialogVisible" :dialog-visible="showDialog" @updateCategoryList="updateCategoryList"/>
+<!--      <AddRole :dialog-visible="showDialog" @updateDialogVisible="updateDialogVisible"-->
+<!--               @updateCategoryList="updateCategoryList"/>-->
+<!--      <AuthTree @updateCategoryList="updateCategoryList"/>-->
       <!--      角色显示新增或更新角色-->
       <!--      <UpdateDialog :dialog-visible="showDialog" @updateDialogVisible="updateDialogVisible"-->
-      <!--                    @updateUserList="updateUserList" :curUpdateRow="curUpdateRow"-->
-      <!--                    :user-update-ope="userUpdateOpe" :role-obj="roleObj" v-if="userUpdateOpe"/>-->
+      <!--                    @updateCategoryList="updateCategoryList" :curUpdateRow="curUpdateRow"-->
+      <!--                    :user-update-ope="categoryUpdateOpe" :category-obj="roleObj" v-if="categoryUpdateOpe"/>-->
       <!--      <AddDialog :dialog-visible="showDialog" @updateDialogVisible="updateDialogVisible" v-else-->
-      <!--                 :role-obj="roleObj" @updateUserList="updateUserList"/>-->
+      <!--                 :category-obj="roleObj" @updateCategoryList="updateCategoryList"/>-->
     </template>
   </Layout>
 </template>
